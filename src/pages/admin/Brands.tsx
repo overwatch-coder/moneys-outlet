@@ -348,7 +348,7 @@ export default function AdminBrands() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-bold text-black/60 uppercase">
-                    Default Product Image
+                    Brand Image
                   </Label>
                   <input
                     type="file"

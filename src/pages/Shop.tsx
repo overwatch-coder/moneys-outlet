@@ -353,7 +353,7 @@ export default function Shop() {
       </div>
 
       {/* Size Filter */}
-      <div className="space-y-5">
+      <div className="space-y-5 hidden">
         <h3 className="text-sm font-bold uppercase tracking-widest text-muted">
           Sizes
         </h3>

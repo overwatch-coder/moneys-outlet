@@ -1,0 +1,31 @@
+{
+  "name": "Money's Outlet",
+  "short_name": "Money's Outlet",
+  "description": "Where Style Meets Value",
+  "theme_color": "#E10600",
+  "background_color": "#0F0F0F",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "logos/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logos/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "e-commerce",
+    "shopping",
+    "outlet",
+    "sneakers",
+    "apparel"
+  ]
+}

@@ -110,6 +110,11 @@ dist
 # Serverless directories
 .serverless/
 
+# SQL database
+*.db
+*.sql
+scripts/
+
 # FuseBox cache
 .fusebox/
 
@@ -137,3 +142,4 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+node_modules

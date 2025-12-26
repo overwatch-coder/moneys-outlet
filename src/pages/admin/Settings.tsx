@@ -223,7 +223,7 @@ export default function AdminSettings() {
   };
 
   return (
-    <div className="p-2 md:p-8 space-y-8 max-w-5xl">
+    <div className="p-2 md:p-8 space-y-8 max-w-5xl mx-auto">
       <h1 className="text-4xl font-semibold text-black italic uppercase tracking-tighter">
         Settings
       </h1>

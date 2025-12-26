@@ -135,7 +135,7 @@ export default function AdminLayout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col lg:ml-[186px] min-w-0">
         {/* Top Bar */}
-        <header className="h-[72px] bg-[#0D0D0D] border-b border-white/10 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-40">
+        <header className="h-[72px] bg-bg-secondary border-b border-white/10 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-40">
           <div className="flex items-center gap-4">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>

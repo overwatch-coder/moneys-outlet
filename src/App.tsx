@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFound";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import LoadingScreen from "@/components/LoadingScreen";
+import RootLayout from "./components/RootLayout";
 
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -57,7 +58,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function App() {
   return (
-    <div className="min-h-screen bg-background text-white selection:bg-primary selection:text-white flex flex-col items-center">
+    <div className="min-h-screen bg-background text-white selection:bg-primary selection:text-white">
       <StatusOverlay />
 
       <Routes>
@@ -65,33 +66,33 @@ function App() {
         <Route
           path="/"
           element={
-            <>
+            <RootLayout>
               <Navbar />
               <Home />
               <Footer />
               <ProductDetailModal />
-            </>
+            </RootLayout>
           }
         />
         <Route
           path="/shop"
           element={
-            <>
+            <RootLayout>
               <Navbar />
               <Shop />
               <Footer />
               <ProductDetailModal />
-            </>
+            </RootLayout>
           }
         />
         <Route
           path="/contact"
           element={
-            <>
+            <RootLayout>
               <Navbar />
               <Contact />
               <Footer />
-            </>
+            </RootLayout>
           }
         />
 
@@ -99,11 +100,11 @@ function App() {
         <Route
           path="/admin/login"
           element={
-            <>
+            <RootLayout>
               <Navbar />
               <AdminLogin />
               <Footer />
-            </>
+            </RootLayout>
           }
         />
         <Route

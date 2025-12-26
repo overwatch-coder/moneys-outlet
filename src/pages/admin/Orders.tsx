@@ -169,7 +169,7 @@ export default function AdminOrders() {
                 Order Status
               </Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[200px] h-11 bg-black/5 border-none rounded-xl text-black">
+                <SelectTrigger className="w-50 h-11 bg-black/5 border-none rounded-xl text-black">
                   <SelectValue placeholder="All Statuses" />
                 </SelectTrigger>
                 <SelectContent className="bg-white text-black border-black/10">
@@ -222,7 +222,7 @@ export default function AdminOrders() {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-white group-hover:text-primary transition-colors">
-                          {order.id.slice(-8).toUpperCase()}
+                          {order.readableId || order.id.slice(-8).toUpperCase()}
                         </p>
                         <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
                           {new Date(order.createdAt).toLocaleDateString()}

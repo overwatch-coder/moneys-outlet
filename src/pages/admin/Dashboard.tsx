@@ -217,7 +217,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-[1600px] mx-auto">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-400 mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -332,7 +332,7 @@ export default function AdminDashboard() {
             </p>
           </div>
         </div>
-        <div className="h-[350px] w-full">
+        <div className="h-87.5 w-full">
           <ChartContainer
             config={revenueConfig}
             className="h-full w-full aspect-auto"
@@ -404,7 +404,7 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div className="flex-1 flex items-center justify-center">
-            <div className="h-[250px] w-full">
+            <div className="h-62.5 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -488,7 +488,7 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div className="flex-1 flex items-center justify-center">
-            <div className="h-[250px] w-full">
+            <div className="h-62.5 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -596,7 +596,7 @@ export default function AdminDashboard() {
         </div>
 
         <div className="overflow-x-auto -mx-2">
-          <table className="w-full min-w-[600px]">
+          <table className="w-full min-w-150">
             <thead>
               <tr className="text-[10px] font-semibold text-white/20 uppercase tracking-[0.2em] text-left border-b border-white/5">
                 <th className="px-4 pb-4">Order ID</th>
@@ -614,7 +614,7 @@ export default function AdminDashboard() {
                 >
                   <td className="px-4 py-4">
                     <span className="text-xs font-semibold text-white group-hover:text-primary transition-colors">
-                      {order.id.slice(-8).toUpperCase()}
+                      {order.readableId || order.id.slice(-8).toUpperCase()}
                     </span>
                   </td>
                   <td className="px-4 py-4">

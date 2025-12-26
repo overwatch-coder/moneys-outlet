@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, Menu, ChevronDown } from "lucide-react";
+import { Search, ShoppingCart, Menu } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -82,7 +82,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 border-b border-white/10">
-      <div className="container flex h-20 items-center justify-between px-4 md:px-8 w-full">
+      <div className="container flex h-20 items-center justify-between px-4 md:px-8 w-full mx-auto">
         {/* Mobile Menu */}
         <div className="flex md:hidden">
           <Sheet>
@@ -93,7 +93,7 @@ export default function Navbar() {
             </SheetTrigger>
             <SheetContent
               side="left"
-              className="bg-background border-r border-white/10 text-white"
+              className="bg-background border-r border-white/10 text-white py-8"
             >
               <SheetHeader>
                 <SheetTitle className="text-primary font-bold text-2xl italic">
@@ -115,10 +115,7 @@ export default function Navbar() {
                         (pathname === link.href ? "text-primary" : "")
                       }
                     >
-                      {link.name}{" "}
-                      {link.hasDropdown && (
-                        <ChevronDown className="inline h-4 w-4" />
-                      )}
+                      {link.name}
                     </Link>
                   </SheetClose>
                 ))}
@@ -150,7 +147,6 @@ export default function Navbar() {
               }
             >
               {link.name}
-              {link.hasDropdown && <ChevronDown className="h-4 w-4" />}
             </Link>
           ))}
         </div>

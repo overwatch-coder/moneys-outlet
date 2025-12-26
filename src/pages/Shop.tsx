@@ -45,7 +45,7 @@ export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const openProductModal = useModal((state) => state.openProductModal);
 
-  const [priceRange, setPriceRange] = useState([0, 3000]);
+  const [priceRange, setPriceRange] = useState([0, 10000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
@@ -188,7 +188,7 @@ export default function Shop() {
   }, [filteredProducts, sortBy]);
 
   const clearFilters = () => {
-    setPriceRange([0, 3000]);
+    setPriceRange([0, 10000]);
     setSelectedCategories([]);
     setSelectedBrands([]);
     setSelectedSizes([]);
@@ -213,7 +213,7 @@ export default function Shop() {
           selectedSizes.length > 0 ||
           selectedColors.length > 0 ||
           priceRange[0] > 0 ||
-          priceRange[1] < 3000 ||
+          priceRange[1] < 10000 ||
           searchQuery ||
           filterType) && (
           <button
@@ -248,14 +248,14 @@ export default function Shop() {
           Price Range
         </h3>
         <Slider
-          defaultValue={[0, 3000]}
-          max={3000}
+          defaultValue={[0, 10000]}
+          max={10000}
           step={50}
           value={priceRange}
           onValueChange={setPriceRange}
           className="py-4"
         />
-        <div className="flex items-center justify-between text-sm font-bold text-primary italic">
+        <div className="flex items-center justify-between text-sm font-bold text-white italic">
           <span>{formatPrice(priceRange[0])}</span>
           <span>{formatPrice(priceRange[1])}</span>
         </div>

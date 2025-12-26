@@ -57,7 +57,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function App() {
   return (
-    <div className="min-h-screen bg-background text-white selection:bg-primary selection:text-white">
+    <div className="min-h-screen bg-background text-white selection:bg-primary selection:text-white flex flex-col items-center">
       <StatusOverlay />
 
       <Routes>

@@ -54,6 +54,7 @@ export default function AdminOrders() {
     return orders.filter((o) => {
       const matchesSearch =
         o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        o.readableId.toLowerCase().includes(searchQuery.toLowerCase()) ||
         o.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         o.customerEmail.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus = statusFilter === "all" || o.status === statusFilter;

@@ -1,3 +1,5 @@
+'use client';
+
 import { create } from "zustand";
 import { CheckCircle2, AlertCircle, Loader2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

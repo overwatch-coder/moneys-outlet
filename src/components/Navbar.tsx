@@ -1,5 +1,8 @@
-import { Search, ShoppingCart, Menu } from "lucide-react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+'use client';
+
+import { Search, ShoppingCart, Menu, User as UserIcon } from "lucide-react";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,10 +18,9 @@ import CartDrawer from "./CartDrawer";
 import NotificationDropdown from "./admin/NotificationDropdown";
 import { useModal } from "@/store/useModal";
 import { formatPrice } from "@/lib/utils";
-import { User as UserIcon } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useProducts } from "@/hooks/useProducts";
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
   const { products } = useProducts();
@@ -26,42 +28,12 @@ export default function Navbar() {
   const openProductModal = useModal((state) => state.openProductModal);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [session, setSession] = useState<any>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const navigate = useNavigate();
-  const pathname = useLocation().pathname;
+  const router = useRouter();
+  const pathname = usePathname();
+  const sessionResult = useSession();
+  const session = sessionResult?.data;
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user) {
-        checkAdmin(session.user.id);
-      }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session?.user) {
-        checkAdmin(session.user.id);
-      } else {
-        setIsAdmin(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const checkAdmin = async (userId: string) => {
-    const { data } = await supabase
-      .from("profile")
-      .select("role")
-      .eq("authId", userId)
-      .single();
-
-    setIsAdmin(data?.role === "admin");
-  };
+  const isAdmin = (session?.user as any)?.role === "ADMIN";
 
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -72,7 +44,7 @@ export default function Navbar() {
           p.description.toLowerCase().includes(searchQuery.toLowerCase())
       )
       .slice(0, 5);
-  }, [searchQuery]);
+  }, [searchQuery, products]);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -106,10 +78,9 @@ export default function Navbar() {
               </SheetHeader>
               <div className="flex flex-col gap-6 mt-10 text-lg uppercase font-semibold">
                 {navLinks.map((link) => (
-                  <SheetClose asChild>
+                  <SheetClose asChild key={link.name}>
                     <Link
-                      key={link.name}
-                      to={link.href}
+                      href={link.href}
                       className={
                         "hover:text-primary transition-colors " +
                         (pathname === link.href ? "text-primary" : "")
@@ -126,7 +97,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <Link to="/" className="flex items-center">
+          <Link href="/" className="flex items-center">
             <img
               src="/logos/logo.png"
               alt="Money's Outlet"
@@ -140,7 +111,7 @@ export default function Navbar() {
           {navLinks.map((link) => (
             <Link
               key={link.name}
-              to={link.href}
+              href={link.href}
               className={
                 "text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-1 " +
                 (pathname === link.href ? "text-primary" : "")
@@ -204,7 +175,7 @@ export default function Navbar() {
                         const currentQuery = searchQuery;
                         setSearchQuery("");
                         setIsSearchFocused(false);
-                        navigate(
+                        router.push(
                           `/shop?search=${encodeURIComponent(currentQuery)}`
                         );
                       }}
@@ -241,7 +212,7 @@ export default function Navbar() {
 
           {session && (
             <Link
-              to={isAdmin ? "/admin" : "/"}
+              href={isAdmin ? "/admin/dashboard" : "/"}
               className="text-white hover:text-primary transition-colors ml-1"
               title={isAdmin ? "Go to Dashboard" : "My Account"}
             >

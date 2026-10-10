@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Bell, Check, Trash2, Mail, ShoppingBag } from "lucide-react";
 import {
   DropdownMenu,
@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { dataService } from "@/lib/dataService";
-import { supabase } from "@/lib/supabase";
 import type { AdminNotification } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -24,7 +23,6 @@ export default function NotificationDropdown() {
   const fetchNotifications = async () => {
     try {
       const data = await dataService.getNotifications();
-      // console.log("Fetching notifications...", data);
       setNotifications(data || []);
       setUnreadCount(data?.filter((n) => !n.isRead).length || 0);
     } catch (error) {
@@ -40,29 +38,9 @@ export default function NotificationDropdown() {
 
   useEffect(() => {
     fetchNotifications();
-
-    // Subscribe to real-time changes
-    const channel = supabase
-      .channel("admin_notifications")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "admin_notification",
-        },
-        (payload) => {
-          const newNotification = payload.new as AdminNotification;
-          setNotifications((prev) => [newNotification, ...prev]);
-          setUnreadCount((prev) => prev + 1);
-          // Optional: Play a sound
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    // Poll notifications every 15 seconds
+    const interval = setInterval(fetchNotifications, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleMarkAsRead = async (id: string, e: React.MouseEvent) => {
@@ -180,7 +158,7 @@ export default function NotificationDropdown() {
                     <div className="flex items-center justify-between">
                       <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium opacity-60">
                         {formatDistanceToNow(
-                          new Date(notification.created_at),
+                          new Date(notification.createdAt || notification.created_at || new Date()),
                           { addSuffix: true }
                         )}
                       </p>
@@ -216,7 +194,7 @@ export default function NotificationDropdown() {
           )}
         </ScrollArea>
         <div className="p-3 border-t border-white/5 bg-white/2">
-          <Link onClick={() => setIsOpen(false)} to="/admin/notifications">
+          <Link onClick={() => setIsOpen(false)} href="/admin/notifications">
             <Button
               variant="ghost"
               className="w-full text-xs font-bold uppercase tracking-widest text-muted hover:text-white"

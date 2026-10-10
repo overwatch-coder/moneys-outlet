@@ -1,265 +1,201 @@
-import { supabase } from '@/lib/supabase';
-import type { Product, Category, Brand } from '@/types';
+import {
+  getProductsServer,
+  getProductByIdServer,
+  createProductAction,
+  updateProductAction,
+  deleteProductAction,
+} from '@/actions/products';
+import {
+  getCategoriesServer,
+  createCategoryAction,
+  updateCategoryAction,
+  deleteCategoryAction,
+} from '@/actions/categories';
+import {
+  getBrandsServer,
+  createBrandAction,
+  updateBrandAction,
+  deleteBrandAction,
+} from '@/actions/brands';
+import {
+  getOrdersServer,
+  updateOrderStatusAction,
+  placeOrderAction,
+} from '@/actions/orders';
+import { getCustomersServer } from '@/actions/customers';
+import {
+  sendContactMessageAction,
+  getContactMessagesServer,
+  deleteContactMessageAction,
+} from '@/actions/contact';
+import {
+  getNotificationsServer,
+  markNotificationAsReadAction,
+  markAllNotificationsAsReadAction,
+  deleteNotificationAction,
+} from '@/actions/notifications';
+import { getStoreSettingServer, updateStoreSettingAction } from '@/actions/settings';
+import type { Product, Category, Brand, OrderStatus } from '@/types';
 
 export const dataService = {
   // Products
   async getProducts() {
-    const { data, error } = await supabase
-      .from('product')
-      .select('*, category:category(*), brand:brand(*)')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data;
+    return (await getProductsServer()) as any[];
   },
 
   async getProductById(id: string) {
-    const { data, error } = await supabase
-      .from('product')
-      .select('*, category:category(*), brand:brand(*)')
-      .eq('id', id)
-      .single();
-    if (error) throw error;
-    return data;
+    return (await getProductByIdServer(id)) as any;
   },
 
   async createProduct(product: Partial<Product>) {
-    const { data, error } = await supabase
-      .from('product')
-      .insert([product])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    const res = await createProductAction(product as any);
+    if (!res.success) throw new Error(res.error);
+    return res.data;
   },
 
   async updateProduct(id: string, product: Partial<Product>) {
-    const { data, error } = await supabase
-      .from('product')
-      .update(product)
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    const res = await updateProductAction(id, product as any);
+    if (!res.success) throw new Error(res.error);
+    return res.data;
   },
 
   async deleteProduct(id: string) {
-    const { error } = await supabase
-      .from('product')
-      .delete()
-      .eq('id', id);
-    if (error) throw error;
+    const res = await deleteProductAction(id);
+    if (!res.success) throw new Error(res.error);
   },
 
   // Categories
   async getCategories() {
-    const { data, error } = await supabase
-      .from('category')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data;
+    return (await getCategoriesServer()) as any[];
   },
 
   async createCategory(category: Partial<Category>) {
-    const { data, error } = await supabase
-      .from('category')
-      .insert([category])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    const res = await createCategoryAction({
+      name: category.name || '',
+      slug: category.slug || (category.name || '').toLowerCase().replace(/\s+/g, '-'),
+    });
+    if (!res.success) throw new Error(res.error);
+    return res.data;
   },
 
   async updateCategory(id: string, category: Partial<Category>) {
-    const { data, error } = await supabase
-      .from('category')
-      .update(category)
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    const res = await updateCategoryAction(id, category as any);
+    if (!res.success) throw new Error(res.error);
+    return res.data;
   },
 
   async deleteCategory(id: string) {
-    const { error } = await supabase
-      .from('category')
-      .delete()
-      .eq('id', id);
-    if (error) throw error;
+    const res = await deleteCategoryAction(id);
+    if (!res.success) throw new Error(res.error);
   },
 
   // Brands
   async getBrands() {
-    const { data, error } = await supabase
-      .from('brand')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data;
+    return (await getBrandsServer()) as any[];
   },
 
   async createBrand(brand: Partial<Brand>) {
-    const { data, error } = await supabase
-      .from('brand')
-      .insert([brand])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    const res = await createBrandAction({
+      name: brand.name || '',
+      logoUrl: brand.logoUrl || '',
+      defaultImage: brand.defaultImage,
+      promoPercentage: brand.promoPercentage,
+      description: brand.description,
+    });
+    if (!res.success) throw new Error(res.error);
+    return res.data;
   },
 
   async updateBrand(id: string, brand: Partial<Brand>) {
-    const { data, error } = await supabase
-      .from('brand')
-      .update(brand)
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    const res = await updateBrandAction(id, brand as any);
+    if (!res.success) throw new Error(res.error);
+    return res.data;
   },
 
   async deleteBrand(id: string) {
-    const { error } = await supabase
-      .from('brand')
-      .delete()
-      .eq('id', id);
-    if (error) throw error;
+    const res = await deleteBrandAction(id);
+    if (!res.success) throw new Error(res.error);
   },
 
   // Orders
   async getOrders() {
-    const { data, error } = await supabase
-      .from('order')
-      .select('*, items:order_item(*, product:product(*))')
-      .order('createdAt', { ascending: false });
-    if (error) throw error;
-    return data;
+    return (await getOrdersServer()) as any[];
   },
 
-  async updateOrderStatus(id: string, status: string) {
-    const { data, error } = await supabase
-      .from('order')
-      .update({ status })
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+  async updateOrderStatus(id: string, status: OrderStatus | string) {
+    const res = await updateOrderStatusAction(id, status as OrderStatus);
+    if (!res.success) throw new Error(res.error);
+    return res.data;
   },
 
   // Customers
   async getCustomers() {
-    const { data, error } = await supabase
-      .from('customer')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data;
+    return (await getCustomersServer()) as any[];
   },
 
-  async upsertCustomer(customer: { email: string; name?: string; phone?: string; address?: string }) {
-    const { data, error } = await supabase
-      .from('customer')
-      .upsert(
-        { ...customer, lastOrderDate: new Date().toISOString() },
-        { onConflict: 'email' }
-      )
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
-  },
-
-  async placeOrder(orderData: { 
-    customerName: string; 
-    customerEmail: string; 
-    customerPhone: string; 
-    shippingAddress: string; 
-    total: number;
-    shippingFee: number;
-    status?: string;
-  }, items: any[]) {
-    const { data, error } = await supabase.rpc('place_order', {
-      p_customer_name: orderData.customerName,
-      p_customer_email: orderData.customerEmail,
-      p_customer_phone: orderData.customerPhone,
-      p_shipping_address: orderData.shippingAddress,
-      p_total: orderData.total,
-      p_shipping_fee: orderData.shippingFee,
-      p_items: items
-    });
-
-    if (error) throw error;
-    return data;
+  // Order Placement (Atomic Transaction)
+  async placeOrder(
+    orderData: {
+      customerName: string;
+      customerEmail: string;
+      customerPhone: string;
+      shippingAddress: string;
+      total: number;
+      shippingFee: number;
+      status?: string;
+    },
+    items: any[]
+  ) {
+    const res = await placeOrderAction(orderData, items);
+    if (!res.success) throw new Error(res.error);
+    return res.data;
   },
 
   // Contact Messages
   async sendContactMessage(message: { name: string; email: string; subject?: string; message: string }) {
-    const { data, error } = await supabase
-      .from('contact_message')
-      .insert([message])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    const res = await sendContactMessageAction(message);
+    if (!res.success) throw new Error(res.error);
+    return res.data;
   },
-  
+
   async getContactMessages() {
-    const { data, error } = await supabase
-      .from('contact_message')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data;
+    return (await getContactMessagesServer()) as any[];
+  },
+
+  async deleteContactMessage(id: string) {
+    const res = await deleteContactMessageAction(id);
+    if (!res.success) throw new Error(res.error);
   },
 
   // Notifications
   async getNotifications() {
-     const { data, error } = await supabase
-      .from('admin_notification')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data;
+    return (await getNotificationsServer()) as any[];
   },
 
   async markNotificationAsRead(id: string) {
-    const { data, error } = await supabase
-      .from('admin_notification')
-      .update({ isRead: true })
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    const res = await markNotificationAsReadAction(id);
+    if (!res.success) throw new Error(res.error);
+    return res.data;
   },
 
   async markAllNotificationsAsRead() {
-    const { data, error } = await supabase
-      .from('admin_notification')
-      .update({ isRead: true })
-      .eq('isRead', false)
-      .select();
-    if (error) throw error;
-    return data;
+    const res = await markAllNotificationsAsReadAction();
+    if (!res.success) throw new Error(res.error);
   },
 
   async deleteNotification(id: string) {
-    const { error } = await supabase
-      .from('admin_notification')
-      .delete()
-      .eq('id', id);
-    if (error) throw error;
+    const res = await deleteNotificationAction(id);
+    if (!res.success) throw new Error(res.error);
   },
 
-  async deleteContactMessage(id: string) {
-    const { error } = await supabase
-      .from('contact_message')
-      .delete()
-      .eq('id', id);
-    if (error) throw error;
-  }
+  // Store Settings
+  async getStoreSetting(key: string) {
+    return await getStoreSettingServer(key);
+  },
+
+  async updateStoreSetting(key: string, value: string) {
+    const res = await updateStoreSettingAction(key, value);
+    if (!res.success) throw new Error(res.error);
+    return res.data;
+  },
 };

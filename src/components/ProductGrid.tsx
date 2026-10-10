@@ -1,5 +1,7 @@
+'use client';
+
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import ProductCard from "./ProductCard";
 import { type Product } from "@/types/index";
 import { useModal } from "@/store/useModal";
@@ -17,7 +19,7 @@ export default function ProductGrid({
   products,
   type,
 }: ProductGridProps) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const openProductModal = useModal((state) => state.openProductModal);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -67,7 +69,7 @@ export default function ProductGrid({
 
             <div
               className="hidden md:flex items-center gap-2 text-muted hover:text-primary cursor-pointer transition-all font-bold text-sm uppercase tracking-widest"
-              onClick={() => navigate(type ? `/shop?type=${type}` : "/shop")}
+              onClick={() => router.push(type ? `/shop?type=${type}` : "/shop")}
             >
               Explore All <ChevronRight className="h-4 w-4" />
             </div>

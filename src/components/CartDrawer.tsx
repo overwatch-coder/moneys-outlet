@@ -1,3 +1,5 @@
+'use client';
+
 import { ShoppingCart, X, Loader2 } from "lucide-react";
 import {
   Sheet,
@@ -17,7 +19,6 @@ import { useStatus } from "./StatusOverlay";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import { dataService } from "@/lib/dataService";
-import { supabase } from "@/lib/supabase";
 
 type CheckoutStage = "cart" | "processing" | "success";
 
@@ -84,7 +85,7 @@ export default function CartDrawer({
         clearCart();
 
         // Show payment modal with the real readable ID
-        setOrderId(order.readableId);
+        setOrderId((order as any)?.orderNumber || (order as any)?.readableId || order?.id || "");
 
         setTimeout(() => {
           setIsSheetOpen(false);
@@ -132,14 +133,13 @@ export default function CartDrawer({
 
   useEffect(() => {
     const fetchShippingFee = async () => {
-      const { data } = await supabase
-        .from("store_settings")
-        .select("value")
-        .eq("key", "shipping_fee")
-        .single();
-
-      if (data?.value) {
-        setShippingFee(Number(data.value));
+      try {
+        const val = await dataService.getStoreSetting("shipping_fee");
+        if (val) {
+          setShippingFee(Number(val));
+        }
+      } catch (err) {
+        console.error("Error fetching shipping fee:", err);
       }
     };
     fetchShippingFee();

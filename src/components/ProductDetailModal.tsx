@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from "react";
 import { Star, X, ShoppingCart } from "lucide-react";
 import {

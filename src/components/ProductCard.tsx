@@ -1,3 +1,5 @@
+'use client';
+
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type Product } from "@/types/index";
@@ -85,7 +87,7 @@ export default function ProductCard({
         <div className="flex-1 mb-4 space-y-3">
           <div className="flex items-center gap-2">
             <span className="text-white text-[10px] md:text-xs line-clamp-2 mt-2 font-medium border-dashed border-muted border-2 px-4 py-1 rounded-full">
-              {product.brand.name}
+              {product.brand?.name || "Brand"}
             </span>
           </div>
 

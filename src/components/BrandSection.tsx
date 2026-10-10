@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { dataService } from "@/lib/dataService";
@@ -10,7 +12,11 @@ export default function BrandSection() {
     dataService
       .getBrands()
       .then((data) => {
-        setBrands(data.slice(0, 3));
+        const priorityNames = ['Jordan', 'Nike', 'Adidas'];
+        const matched = priorityNames
+          .map((name) => data.find((b) => b.name.toLowerCase() === name.toLowerCase()))
+          .filter(Boolean) as Brand[];
+        setBrands(matched.length === 3 ? matched : data.slice(0, 3));
       })
       .catch(console.error);
   }, []);
@@ -21,7 +27,7 @@ export default function BrandSection() {
       color: "bg-[#2B2B2B]",
       badgeColor: "bg-white/10",
       textColor: "text-white",
-      defaultImage: "/images/nike.png",
+      defaultImage: "/images/jordan_4_cement.png",
     },
     {
       promo: "UP TO 50% OFF",
@@ -29,7 +35,7 @@ export default function BrandSection() {
       badgeColor: "bg-[#F7E18B]",
       textColor: "text-[#4A4226]",
       hasPattern: true,
-      defaultImage: "/images/nike.png",
+      defaultImage: "/images/travis_scott_angle.png",
     },
     {
       promo: "UP TO 50% OFF",
@@ -37,7 +43,7 @@ export default function BrandSection() {
       badgeColor: "bg-[#FFD1B0]",
       textColor: "text-black",
       hasCircle: true,
-      defaultImage: "/images/nike.png",
+      defaultImage: "/images/yeezy_350_onyx_angle.png",
     },
   ];
 

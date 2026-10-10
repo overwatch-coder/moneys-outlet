@@ -1,4 +1,7 @@
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+'use client';
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
@@ -29,37 +32,27 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useAdminModals } from "@/lib/admin-modals";
-import { supabase } from "@/lib/supabase";
-import { useEffect, useState } from "react";
-import { type User as UserType } from "@supabase/supabase-js";
-
+import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 import NotificationDropdown from "./NotificationDropdown";
 
-export default function AdminLayout() {
-  const location = useLocation();
-  const navigate = useNavigate();
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
   const openAddProduct = useAdminModals((state) => state.openAddProduct);
-  const [user, setUser] = useState<UserType | null>(null);
+  const sessionResult = useSession();
+  const session = sessionResult?.data;
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: user } = await supabase.auth.getUser();
-      setUser(user.user);
-    };
-    fetchUser();
-  }, []);
-
   const handleAddProduct = () => {
-    if (location.pathname !== "/admin/products") {
-      navigate("/admin/products");
+    if (pathname !== "/admin/products") {
+      router.push("/admin/products");
     }
     openAddProduct();
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/admin/login");
+    await signOut({ callbackUrl: "/admin/login" });
   };
 
   const navItems = [
@@ -73,13 +66,13 @@ export default function AdminLayout() {
     { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => pathname === path;
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-[#0D0D0D]">
       {/* Logo */}
       <div className="p-6 border-b border-white/10">
-        <Link to="/admin/dashboard">
+        <Link href="/admin/dashboard">
           <img
             src="/logos/logo.png"
             alt="Money's Outlet"
@@ -98,7 +91,7 @@ export default function AdminLayout() {
             <Link
               onClick={() => setOpen(false)}
               key={item.name}
-              to={item.href}
+              href={item.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 active
                   ? "bg-white text-primary font-bold"
@@ -116,7 +109,7 @@ export default function AdminLayout() {
       <div className="p-4 border-t border-white/10">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary hover:bg-white/10 transition-all w-full"
+          className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary hover:bg-white/10 transition-all w-full text-left"
         >
           <LogOut className="h-5 w-5" />
           <span className="text-sm font-bold">Logout</span>
@@ -156,7 +149,7 @@ export default function AdminLayout() {
               </SheetContent>
             </Sheet>
             <div className="flex lg:hidden">
-              <Link to="/admin/dashboard">
+              <Link href="/admin/dashboard">
                 <img src="/logos/logo.png" alt="" className="h-8 w-auto" />
               </Link>
             </div>
@@ -187,16 +180,16 @@ export default function AdminLayout() {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-bold leading-none">
-                      Super Admin
+                      Admin
                     </p>
                     <p className="text-xs leading-none text-white/50">
-                      {user?.email}
+                      {session?.user?.email || "Admin User"}
                     </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-white/10" />
                 <DropdownMenuItem
-                  onClick={() => navigate("/admin/settings")}
+                  onClick={() => router.push("/admin/settings")}
                   className="hover:bg-white/10 cursor-pointer"
                 >
                   <Settings className="mr-2 h-4 w-4" />
@@ -217,7 +210,7 @@ export default function AdminLayout() {
 
         {/* Page Content */}
         <main className="flex-1">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>
